@@ -13,6 +13,6 @@ negative_reviews = negative_reviews.findAll('review_text')
 
 #model = MultinomialNB()
 model = LogisticRegression()
-nlp = NaturalLanguageProcesser(model, positive_reviews, negative_reviews)
-nlp.fit()
+nlp = NaturalLanguageProcesser(model)
+nlp.fit(positive_reviews, negative_reviews)
 nlp.score()

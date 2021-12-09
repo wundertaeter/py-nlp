@@ -19,26 +19,20 @@ def clearLinks(list):
 
 
 class NaturalLanguageProcesser(object):
-    def __init__(self, model, positive_news, negative_news, test_ratio=0.2, clear_links=False):
+    def __init__(self, model, test_ratio=0.2, ignore_links=False):
         self.model = model
         self.data = None
         self.train_data = None
         self.test_data = None
-        self.positive_news = positive_news
-        self.negative_news = negative_news
-        self.clear_links = clear_links
+        self.ignore_links = ignore_links
         self.test_ratio = test_ratio
 
-        if clear_links:
+    def prepare_data(self, positive_news, negative_news):
+        preprocesser.reset()
+
+        if self.ignore_links:
             positive_news = clearLinks(positive_news)
             negative_news = clearLinks(negative_news)
-
-        self.get_data()
-
-    def get_data(self):
-        preprocesser.reset()
-        positive_news = self.positive_news
-        negative_news = self.negative_news
 
         print('positive len: ', len(positive_news))
         print('negative len: ', len(negative_news))
@@ -73,7 +67,8 @@ class NaturalLanguageProcesser(object):
     def set_model(self, model):
         self.model = model
 
-    def fit(self):
+    def fit(self, positive_news, negative_news):
+        self.prepare_data(positive_news, negative_news)
         X, Y = self.train_data
         self.model.fit(X, Y)
         accuracy = self.model.score(X, Y)
@@ -91,7 +86,7 @@ class NaturalLanguageProcesser(object):
         if type(data) != list:
             data = [data]
 
-        if self.clear_links:
+        if self.ignore_links:
             data = clearLinks(data)
 
         data = preprocesser.prepare(data)
